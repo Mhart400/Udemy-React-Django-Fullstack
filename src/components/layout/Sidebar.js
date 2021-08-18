@@ -15,6 +15,7 @@ import { auth } from "../../services/user-services";
 import { useAuth } from "../../hooks/useAuth";
 import { Link, useHistory } from "react-router-dom";
 import User from "../user/User";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -56,6 +57,10 @@ const Sidebar = () => {
     setAuth(null);
   };
 
+  const { enqueueSnackbar } = useSnackbar();
+
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = await auth({
@@ -63,11 +68,16 @@ const Sidebar = () => {
       password: values.password,
     });
     console.log(data);
-    // localStorage.setItem('bwf-user', JSON.stringify(data))
     if (data.token) {
       setAuth(data);
+      enqueueSnackbar('Logged In!', {variant: 'success'})
+      history.push('/')
     } else {
       logout();
+      history.push('/')
+      enqueueSnackbar('Invalid Username or Password!', {variant: 'error'})
+      
+      usernameRef.current.focus()
     }
   };
 
@@ -97,7 +107,7 @@ const Sidebar = () => {
                     startAdornment={<AccountCircle />}
                     onChange={handleChange("username")}
                     value={values.username}
-                    ref={usernameRef}
+                    inputProps={{ref: usernameRef}}
                     autoFocus
                   />
                 </FormControl>

@@ -7,6 +7,8 @@ import Header from "./components/layout/Header";
 import Sidebar from "./components/layout/Sidebar";
 import Main from "./components/layout/Main";
 import { AuthProvider } from "./hooks/useAuth";
+import { CustomSnackbarProvider } from "./components/layout/Snackbar";
+import { Snackbar } from "@material-ui/core";
 
 function App() {
   
@@ -15,6 +17,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider user={user}>
+        <CustomSnackbarProvider maxSnack={3}>
         <Router>
           <div className="App">
             <Header />
@@ -24,6 +27,7 @@ function App() {
             </div>
           </div>
         </Router>
+        </CustomSnackbarProvider>
       </AuthProvider>
     </ThemeProvider>
   );
