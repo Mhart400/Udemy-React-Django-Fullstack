@@ -3,9 +3,9 @@ import { BrowserRouter as Router } from "react-router-dom";
 import theme from "./theme";
 import "./App.css";
 import React from "react";
-import Header from "./components/Header";
-import Sidebar from "./components/Sidebar";
-import Main from "./components/Main";
+import Header from "./components/layout/Header";
+import Sidebar from "./components/layout/Sidebar";
+import Main from "./components/layout/Main";
 import { AuthProvider } from "./hooks/useAuth";
 
 function App() {

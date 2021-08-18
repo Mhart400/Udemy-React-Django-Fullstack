@@ -1,19 +1,17 @@
-import { useAuth } from "../hooks/useAuth";
-import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { auth } from "../../services/user-services";
+import { Link, useHistory } from "react-router-dom";
 import { Button } from "@material-ui/core";
-import { useState, useRef, useEffect } from "react";
-import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
-import { IconButton } from "@material-ui/core";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { useState, useRef} from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { Input } from "@material-ui/core";
 import { FormControl } from "@material-ui/core";
 import { InputLabel } from "@material-ui/core";
-import { auth } from "../services/user-services";
+import EmailIcon from '@material-ui/icons/Email';
+import { register } from "../../services/user-services";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -41,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
 
 const Register = () => {
   const classes = useStyles();
+  
+  const history = useHistory();
+  const { authData, setAuth } = useAuth();
 
   const initialValues = {
     email: "",
@@ -58,19 +59,32 @@ const Register = () => {
 
   const usernameRef = useRef();
 
-  const { authData, setAuth } = useAuth();
-
   const passMatch = () => {
       return (values.password === values.password2);
   }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (passMatch()) {
         console.log('all good', values.password2, values.password, values.username)
+        const regData = await register({
+          username: values.username, 
+          password: values.password, 
+          email: values.email,
+          profile: {}
+        });
+        if (regData) {
+          const data = await auth({
+            username: values.username,
+            password: values.password,
+          });
+          setAuth(data);
+          history.push('/account')
+        }
     } else {
         console.log('passwords dont match')
-    }
+    };
   };
   return (
     <div>
@@ -109,7 +123,7 @@ const Register = () => {
                 <Input
                   id="email"
                   type="email"
-                  startAdornment={<AccountCircle />}
+                  startAdornment={<EmailIcon />}
                   onChange={handleChange("email")}
                   value={values.email}
                   className={classes.input}

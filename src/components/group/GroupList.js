@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getGroups } from "../services/group-services";
+import { getGroups } from "../../services/group-services";
 
 const GroupList = () => {
   const [groups, setGroups] = useState(null);

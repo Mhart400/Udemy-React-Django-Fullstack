@@ -16,10 +16,17 @@ const theme = createTheme({
     overrides: {
         MuiButton: {
             root: {
-                margin: '0 2px',
-            }
-        }
-    }
+                margin: '2px 4px',
+                display: 'block',
+            },
+        },
+    },
+    props: {
+        MuiButton: {
+            variant: 'contained',
+            color: 'primary',
+        },
+    },
 })
 
 

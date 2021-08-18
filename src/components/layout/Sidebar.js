@@ -1,6 +1,6 @@
 import { Button } from "@material-ui/core";
-import { useState, useRef, useEffect } from "react";
-import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
+import { useState, useRef} from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import { IconButton } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Grid from "@material-ui/core/Grid";
@@ -11,9 +11,10 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { Input } from "@material-ui/core";
 import { FormControl } from "@material-ui/core";
 import { InputLabel } from "@material-ui/core";
-import { auth } from "../services/user-services";
-import { useAuth } from "../hooks/useAuth";
-import { Link } from "react-router-dom";
+import { auth } from "../../services/user-services";
+import { useAuth } from "../../hooks/useAuth";
+import { Link, useHistory } from "react-router-dom";
+import User from "../user/User";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -69,6 +70,12 @@ const Sidebar = () => {
       logout();
     }
   };
+
+  const history = useHistory();
+
+  const account = () => {
+    history.push('/account')
+  }
 
   return (
     <div className="sidebar">
@@ -145,13 +152,16 @@ const Sidebar = () => {
             <br />
             <br />
           </form>
-          <Link to="/register">Sign-up here if you don't have an account</Link>
+          <Link to="/register">REGISTER for an account</Link>
         </>
       ) : (
         <>
-          <p>Username: {authData.user.username}</p>
+          <User user={authData.user} />
           <Button color="primary" variant="contained" onClick={() => logout()}>
             Logout
+          </Button>
+          <Button color="primary" variant="contained" onClick={account}>
+            My Account
           </Button>
         </>
       )}
