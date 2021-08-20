@@ -41,9 +41,12 @@ export function changePassword(userData, userId, token) {
     });
 }
 
-export function uploadAvatar(profileId, data) {
+export function uploadAvatar(profileId, data, token) {
   return fetch(`http://localhost:8000/api/profile/${profileId}/`, {
     method: "PUT",
+    headers: {
+      "Authorization": `Token ${token}`
+    },
     body: data,
   })
     .then(status).catch( e => {

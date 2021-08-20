@@ -7,8 +7,10 @@ import AlarmIcon from "@material-ui/icons/Alarm";
 import { makeStyles } from "@material-ui/core/styles";
 import User from "../user/User";
 import { Button } from "@material-ui/core";
-import { joinGroup } from "../../services/group-services";
+import { joinGroup, leaveGroup } from "../../services/group-services";
 import { useAuth } from "../../hooks/useAuth";
+import Comments from "../comments/Comments";
+import EventList from "../events/EventList";
 
 const useStyles = makeStyles((theme) => ({
   dateTime: {
@@ -17,8 +19,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.colors.mainAccentColor,
   },
   memberContainer: {
-    display: 'flex',
-    alignItems: 'flex-end',
+    display: "flex",
+    alignItems: "flex-end",
+  },
+  headers:{
+    fontWeight: 'bold',
+    textDecoration: 'underline',
   },
 }));
 
@@ -28,19 +34,39 @@ const GroupDetails = () => {
   const { authData } = useAuth();
   const [data, loading, error] = useFetchGroup(id);
   const [group, setGroup] = useState(null);
+  const [inGroup, setInGroup] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
+ 
   useEffect(() => {
+    if (data?.members && authData?.user) {
+      // "!!" converts the expression to Boolean
+      setInGroup(
+        !!data.members.find((member) => member.user.id === authData.user.id)
+      );
+
+      // check for admin
+      setIsAdmin(
+        !!data.members.find((member) => member.user.id === authData.user.id)
+          ?.admin
+      );
+    }
+
     setGroup(data);
-  }, [data]);
+  }, [data, authData, group]);
 
   if (error) return <h4>Error</h4>;
 
   if (loading) return <h4>Loading...</h4>;
 
-
   const joinHere = () => {
-    joinGroup({user: authData.user.id})
-  }
+    joinGroup({ user: authData.user.id, group: group.id }, authData.token);
+  };
+
+  const leaveHere = () => {
+    leaveGroup({ user: authData.user.id, group: group.id }, authData.token);
+  };
+
 
   return (
     <div>
@@ -60,42 +86,23 @@ const GroupDetails = () => {
             <li>Location: {group.location}</li>
             <li>Description: {group.description}</li>
           </ul>
+          {isAdmin && <p>!! You are an Admin of this group</p>}
+          {!inGroup ? (
+            <Button onClick={() => joinHere()}>Join Group</Button>
+          ) : (
+            <Button onClick={() => leaveHere()}>Leave Group</Button>
+          )}
           <br />
-          <p style={{ fontWeight: "bold", textDecoration: "underline" }}>
+          <h4 className={classes.headers}>
             Events:
-          </p>
-          <ul>
-            {group.events &&
-              group.events.map((event) => {
-                const format = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-                const eventTime = DateTime.fromFormat(event.time, format);
-                return (
-                  <li id={event.id}>
-                    <div style={{ fontWeight: "bold" }}>
-                      {event.team1} vs. {event.team2}
-                    </div>
-                    <div className="centerV">
-                      <span
-                        className="centerV"
-                        style={{ padding: "5px 5px 5px 0" }}
-                      >
-                        <CalendarTodayIcon className={classes.dateTime} />
-                        {eventTime.toFormat("DDDD")}
-                      </span>
-                      <span className="centerV" style={{ padding: "5px" }}>
-                        <AlarmIcon className={classes.dateTime} />
-                        {eventTime.toFormat("t")}
-                      </span>
-                    </div>
-                  </li>
-                );
-              })}
-            {group.events.length < 1 && <li>none</li>}
-          </ul>
+          </h4>
+          
+          {/* ***LIST OF EVENTS*** */}
+          {group.events && <EventList group={group} />}
 
-          <p style={{ fontWeight: "bold", textDecoration: "underline" }}>
+          <h4 className={classes.headers}>
             Members:
-          </p>
+          </h4>
 
           {group.events &&
             group.members.map((member) => {
@@ -107,9 +114,9 @@ const GroupDetails = () => {
               );
             })}
           {group.events.length < 1 && <li>none</li>}
+          <Comments group={group} />
         </>
       )}
-      <Button onClick={() => joinHere()} >Join Group</Button>
     </div>
   );
 };

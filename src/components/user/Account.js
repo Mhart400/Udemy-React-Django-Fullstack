@@ -61,7 +61,8 @@ const Account = () => {
     uploadData.append("image", image, image.name);
     const uploadedData = await uploadAvatar(
       authData.user.profile.id,
-      uploadData
+      uploadData,
+      authData.token
     );
     if (uploadedData) {
       enqueueSnackbar("Avatar Uploaded!", { variant: "success" });

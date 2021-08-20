@@ -14,13 +14,42 @@ export function getGroup(id) {
     });
 }
 
-export function joinGroup(data) {
+export function joinGroup(data, token) {
   return fetch(`http://127.0.0.1:8000/api/members/join/`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'appliacation/json'
+      "Content-Type": "application/json",
+      "Authorization": `Token ${token}`
     },
     body: JSON.stringify(data)
+  })
+    .then(status).catch((err) => {
+      console.log(err);
+    });
+}
+
+export function leaveGroup(data, token) {
+  return fetch(`http://127.0.0.1:8000/api/members/leave/`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Token ${token}`
+    },
+    body: JSON.stringify(data)
+  })
+    .then(status).catch((err) => {
+      console.log(err);
+    });
+}
+
+export function postComment(token, description, group, user) {
+  return fetch(`http://127.0.0.1:8000/api/comments/`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Token ${token}`
+    },
+    body: JSON.stringify({description, group, user})
   })
     .then(status).catch((err) => {
       console.log(err);
