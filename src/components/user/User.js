@@ -31,7 +31,7 @@ const User = ({user}) => {
   return (
  
         <div className={classes.container}>
-          <Avatar src={"http://localhost:8000" + authData.user.profile.image} alt="user avater" className={classes.avatar} />
+          <Avatar src={"http://localhost:8000" + user.profile.image} alt="user avater" className={classes.avatar} />
           <div className={classes.username} >{user.username}</div>
           
           <br/>

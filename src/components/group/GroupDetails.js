@@ -4,19 +4,28 @@ import { useFetchGroup } from "../../hooks/useFetchGroup";
 import { DateTime } from "luxon";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import AlarmIcon from "@material-ui/icons/Alarm";
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from "@material-ui/core/styles";
+import User from "../user/User";
+import { Button } from "@material-ui/core";
+import { joinGroup } from "../../services/group-services";
+import { useAuth } from "../../hooks/useAuth";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   dateTime: {
-    fontSize: '1rem',
-    marginRight: '3px',
+    fontSize: "1rem",
+    marginRight: "3px",
     color: theme.colors.mainAccentColor,
   },
-}))
+  memberContainer: {
+    display: 'flex',
+    alignItems: 'flex-end',
+  },
+}));
 
 const GroupDetails = () => {
   const classes = useStyles();
   const { id } = useParams();
+  const { authData } = useAuth();
   const [data, loading, error] = useFetchGroup(id);
   const [group, setGroup] = useState(null);
 
@@ -27,6 +36,11 @@ const GroupDetails = () => {
   if (error) return <h4>Error</h4>;
 
   if (loading) return <h4>Loading...</h4>;
+
+
+  const joinHere = () => {
+    joinGroup({user: authData.user.id})
+  }
 
   return (
     <div>
@@ -69,7 +83,7 @@ const GroupDetails = () => {
                         {eventTime.toFormat("DDDD")}
                       </span>
                       <span className="centerV" style={{ padding: "5px" }}>
-                        <AlarmIcon  className={classes.dateTime} />
+                        <AlarmIcon className={classes.dateTime} />
                         {eventTime.toFormat("t")}
                       </span>
                     </div>
@@ -78,8 +92,24 @@ const GroupDetails = () => {
               })}
             {group.events.length < 1 && <li>none</li>}
           </ul>
+
+          <p style={{ fontWeight: "bold", textDecoration: "underline" }}>
+            Members:
+          </p>
+
+          {group.events &&
+            group.members.map((member) => {
+              return (
+                <div key={member.id} className={classes.memberContainer}>
+                  <User user={member.user} />
+                  <p>{member.points} pts</p>
+                </div>
+              );
+            })}
+          {group.events.length < 1 && <li>none</li>}
         </>
       )}
+      <Button onClick={() => joinHere()} >Join Group</Button>
     </div>
   );
 };

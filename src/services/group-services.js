@@ -13,3 +13,16 @@ export function getGroup(id) {
       console.log(err);
     });
 }
+
+export function joinGroup(data) {
+  return fetch(`http://127.0.0.1:8000/api/members/join/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'appliacation/json'
+    },
+    body: JSON.stringify(data)
+  })
+    .then(status).catch((err) => {
+      console.log(err);
+    });
+}

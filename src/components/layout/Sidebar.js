@@ -167,7 +167,7 @@ const Sidebar = () => {
       ) : (
         <>
           <User user={authData.user} />
-          <Button color="primary" variant="contained" onClick={() => logout()}>
+          <Button color="primary" variant="contained" onClick={() => (logout(), history.push('/'))}>
             Logout
           </Button>
           <Button color="primary" variant="contained" onClick={account}>
